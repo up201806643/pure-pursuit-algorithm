@@ -1,0 +1,12 @@
+meter alteracoes no git:
+
+git add *
+
+git commit -m tituloalteracoes
+
+git push
+
+
+Obter alteracoes do git:
+
+git pull
