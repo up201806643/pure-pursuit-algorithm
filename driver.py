@@ -82,10 +82,8 @@ class Driver(object):
     def init(self):
         '''Return init string with rangefinder angles'''
         
-        self.angles = [0 for x in range(19)]
         
-        for i in range(19):
-            self.angles[i] = -90 + i * 10
+        self.angles = [ -90.0, -75.0, -60.0, -45.0, -30.0, -20.0, -15.0, -10.0, -5.0,     0.0,    5.0,  10.0, 15.0, 20.0, 30.0, 45.0, 60.0, 75.0, 90.0]
 
         
         return self.parser.stringify({'init': self.angles})
@@ -145,20 +143,25 @@ class Driver(object):
     def computeSteering(self):
 
         targetAngle = self.computeTargetAngle()
-        print(targetAngle*self.DEG_PER_RAD)
         
 
         #alpha (a) = angle of longest sensor (... -20, -10, 0, 10, 20, ...)
-        print(self.state.getSpeed())
+        print("speed", self.state.getSpeed())
+        sp = (self.PURE_PURSUIT_K * self.state.getSpeed())
 
-        self.rawSteeringAngleRad = -math.atan( (self.PURE_PURSUIT_2L * math.sin(targetAngle)) / (self.PURE_PURSUIT_K * self.state.getSpeed()))
+        print("target", targetAngle , "sp", sp)
+        if sp == 0:
+            self.rawSteeringAngleRad = 0
+        else:
+            self.rawSteeringAngleRad = -math.atan( (self.PURE_PURSUIT_2L * math.sin(targetAngle)) / sp)
         self.rawSteeringAngleDeg = self.rawSteeringAngleRad * self.DEG_PER_RAD
-
+        print("self", self.rawSteeringAngleDeg)
         #normalize between[-1,1]
         self.normalizedSteeringAngle = self.state.clamp(self.rawSteeringAngleDeg / self.MAX_STEERING_ANGLE_DEG, -1.0, 1.0)
-
-
-        #Nao sei o que faz
+        
+        self.steeringCmdFilter.push(self.normalizedSteeringAngle)
+        print(self.control.getSteer())
+        '''
 
         if self.USE_STEERING_FILTER:
             self.steeringCmdFilter.push(self.normalizedSteeringAngle)
@@ -181,7 +184,7 @@ class Driver(object):
 
 
         print(self.control.getSteer())
-        
+        '''
 
 
     def computeTargetAngle(self):

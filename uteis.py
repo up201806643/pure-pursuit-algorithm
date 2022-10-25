@@ -4,8 +4,8 @@ class tool(object):
     def __init__(self):
 
         self.sum = 0
-        self.size = 3
-        self.data = [0, 0, 0]
+        self.size = 5
+        self.data = [0, 0, 0, 0, 0]
         self.dataI = 0
         
 

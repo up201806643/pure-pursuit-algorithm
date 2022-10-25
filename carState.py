@@ -292,11 +292,13 @@ class CarState(object):
     #Acrescentados
 
     def getMaxDistanceAngle(self):
-        return self.getMaxDistanceSensor() * 10 - 90.0
+        angle =  self.getMaxDistanceSensor() * 10 - 90.0
+        print("Sensor de maior distancia",self.getMaxDistanceSensor())
+        return angle
 
     def getMaxDistanceSensor(self):
-
-        if self.maxDistanceSensorIdx > -1:
+        print("FASSFA")
+        if self.maxDistanceSensorIdx == -1:
             return self.maxDistanceSensorIdx
 
         #Para encontrar o sensor com maior distancia
