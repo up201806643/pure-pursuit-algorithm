@@ -21,4 +21,4 @@ class tool(object):
         return self.sum / self.size
 
 
-#class teste 1
+#class teste 2
