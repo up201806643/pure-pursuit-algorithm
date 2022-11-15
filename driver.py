@@ -25,12 +25,12 @@ class Driver(object):
         self.DEFAULT_MAX_SPEED = 250
 
         self.GEAR_MAX = 6      
-        self.RPM_MAX = 9500    
+        self.RPM_MAX = 7000    
         self.ACCEL_MAX = 1.0    
         self.ACCEL_DELTA = 0.5             # maximum rate of change in acceleration signal, avoid spinning out
 
-        self.BRAKING_MAX = -0.5            # braking signal <= BRAKING_MAX 
-        self.BRAKING_DELTA = 0.05          # dampen braking to avoid lockup, max rate of chage in braking
+        self.BRAKING_MAX = -1           # braking signal <= BRAKING_MAX 
+        self.BRAKING_DELTA = 0.1          # dampen braking to avoid lockup, max rate of chage in braking
         self.WHEELSPIN_ACCEL_DELTA = 0.025
         self.WHEELSPIN_MAX = 5.0           # greater than this value --> loss of control
 
@@ -66,7 +66,7 @@ class Driver(object):
         self.speedMonitor = uteis.tool()
 
         #Controlador de velocidade
-        self.pid = PID(0.2,0.0,0.0, setpoint = 0.0)
+        self.pid = PID(0.5,0,1, setpoint = 0.0)
 
 
         self.WARM_UP = 0
@@ -80,8 +80,7 @@ class Driver(object):
         self.state = carState.CarState()
         
         self.control = carControl.CarControl()
-
-    
+        self.past_accel = 0
     def init(self):
         '''Return init string with rangefinder angles'''
         
@@ -102,9 +101,7 @@ class Driver(object):
 
         self.computeSpeed()
 
-        #self.gear()
-        
-        #self.speed()
+
         
         return self.control.toMsg()
     
@@ -248,7 +245,6 @@ class Driver(object):
 
     #Speed target
     def computeSpeed(self):
-
         accel = 0
         gear = self.state.getGear()
         breakingZone = self.state.getMaxDistance() < self.state.getSpeedX() / 1.5
@@ -282,17 +278,21 @@ class Driver(object):
             self.pid.setpoint = targetSpeed
             #accel = ao valor de la
             accel = self.pid(self.state.getSpeed())
-        
+            print('accel1', accel)
         if accel > 0 :
-            accel = self.state.clamp(accel, 0.0, self.control.getAccel() + self.ACCEL_MAX)
+            accel = self.state.clamp(accel, 0.0, self.ACCEL_MAX)
             if gear == 0 or self.state.getRpm() > self.RPM_MAX:
                 gear = gear + 1
         elif accel < 0:
             accel = self.state.clamp(accel, self.control.getAccel() - self.BRAKING_DELTA, 0.0)
+            if self.control.getAccel()==0.0:
+               accel = self.past_accel - self.BRAKING_DELTA
+               print('fodasswe')
+            self.past_accel = accel
+
             if self.state.getRpm() < self.RPM_MAX * 0.75:
                 gear = gear - 1
-        
-        self.control.setBrake(self.state.clamp(gear, 1, self.GEAR_MAX))
+        #self.control.setBrake(self.state.clamp(gear, 1, self.GEAR_MAX))
 
         accel = self.state.clamp(accel, self.BRAKING_MAX, self.ACCEL_MAX)
         if accel > 0.0:
