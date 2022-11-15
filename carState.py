@@ -292,14 +292,11 @@ class CarState(object):
     #Acrescentados
 
     def getMaxDistanceAngle(self):
+
         angle =  self.getMaxDistanceSensor() * 10 - 90.0
-        print("Sensor de maior distancia",self.getMaxDistanceSensor())
         return angle
 
     def getMaxDistanceSensor(self):
-        print("FASSFA")
-        if self.maxDistanceSensorIdx == -1:
-            return self.maxDistanceSensorIdx
 
         #Para encontrar o sensor com maior distancia
         max_sensor = 0
@@ -313,6 +310,9 @@ class CarState(object):
 
         return max_sensor
 
+    def getMaxDistance(self):
+        return self.getTrack()[self.getMaxDistanceSensor()]
+
     def getSpeed(self):
         return math.sqrt(math.pow(self.speedX,2) + math.pow(self.speedY,2))
   
@@ -325,6 +325,8 @@ class CarState(object):
     def isOffTrack(self):
         PI_HALF = math.pi / 2.0
         return abs(self.getTrackPos()) > 1.0 or abs(self.getAngle()) > PI_HALF
+
+    
 
     
     
