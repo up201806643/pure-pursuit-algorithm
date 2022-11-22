@@ -293,7 +293,6 @@ class Driver(object):
 
             if self.state.getRpm() < self.RPM_MAX * 0.75:
                 gear = gear - 1
-        #self.control.setBrake(self.state.clamp(gear, 1, self.GEAR_MAX))
 
         accel = self.state.clamp(accel, self.BRAKING_MAX, self.ACCEL_MAX)
         if accel > 0.0:
