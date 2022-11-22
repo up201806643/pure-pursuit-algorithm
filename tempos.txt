@@ -1,0 +1,20 @@
+        self.pid = PID(0.5,0,0.25, setpoint = 0.0)  - 1.47.44  -- segue bem
+
+self.pid = PID(0.8,0,0.25, setpoint = 0.0)  - 1.55.48
+
+        self.pid = PID(0.3,0,0.2, setpoint = 0.0) -- saiu pq muito rapido -- 1.45.88
+
+        self.pid = PID(0.4,0,0.25, setpoint = 0.0)  - 1.47.44
+	
+	 self.pid = PID(0.5,0.0001,0.25, setpoint = 0.0)				- 1.42.59
+   breakingZone = self.state.getMaxDistance() < self.state.getSpeedX() / 1.65
+
+
+pista weel2
+        breakingZone = self.state.getMaxDistance() < self.state.getSpeedX() / 1.65
+	        self.pid = PID(0.5,0,0.25, setpoint = 0.0)
+
+
+
+
+
