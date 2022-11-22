@@ -20,7 +20,7 @@ class Driver(object):
         self.PI_FOURTHS = math.pi / 4.0 # 90 deg
         self.RAD_PER_DEG = math.pi / 180.0
         self.DEG_PER_RAD = 1.0 / self.RAD_PER_DEG 
-
+        self.taveira = gay
         self.DEFAULT_MIN_SPEED = 50
         self.DEFAULT_MAX_SPEED = 250
 
