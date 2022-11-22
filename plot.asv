@@ -1,0 +1,8 @@
+file =  fopen('texto.txt');
+content = textscan(file, '%f %f')
+
+target_speed = content(1,:);
+speed = content(2,:);
+
+figure
+plot(target_speed,speed )

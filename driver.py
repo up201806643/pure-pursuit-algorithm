@@ -66,7 +66,7 @@ class Driver(object):
         self.speedMonitor = uteis.tool()
 
         #Controlador de velocidade
-        self.pid = PID(0.5,0,1, setpoint = 0.0)
+        self.pid = PID(0.5,0.0001,0.25, setpoint = 0.0)
 
 
         self.WARM_UP = 0
@@ -81,6 +81,11 @@ class Driver(object):
         
         self.control = carControl.CarControl()
         self.past_accel = 0
+
+        self.file = open("texto.txt", "a")
+        self.file.truncate(0)
+
+
     def init(self):
         '''Return init string with rangefinder angles'''
         
@@ -247,7 +252,7 @@ class Driver(object):
     def computeSpeed(self):
         accel = 0
         gear = self.state.getGear()
-        breakingZone = self.state.getMaxDistance() < self.state.getSpeedX() / 1.5
+        breakingZone = self.state.getMaxDistance() < self.state.getSpeedX() / 1.65
         targetSpeed = 0
         hasWhellSpin = False
 
@@ -284,11 +289,7 @@ class Driver(object):
             if gear == 0 or self.state.getRpm() > self.RPM_MAX:
                 gear = gear + 1
         elif accel < 0:
-            accel = self.state.clamp(accel, self.control.getAccel() - self.BRAKING_DELTA, 0.0)
-            if self.control.getAccel()==0.0:
-               accel = self.past_accel - self.BRAKING_DELTA
-               print('fodasswe')
-            self.past_accel = accel
+            accel = self.state.clamp(accel, self.control.getAccel() - self.control.getBrake() - self.BRAKING_DELTA, 0.0)
 
             if self.state.getRpm() < self.RPM_MAX * 0.75:
                 gear = gear - 1
@@ -309,7 +310,8 @@ class Driver(object):
 
         print('TargerSpeed: ', targetSpeed, 'Acceleration: ', self.control.getAccel(), 'Breaking: ', self.control.getBrake())
 
-
+        content = str(targetSpeed) + ' ' + str(self.state.getSpeedX()) + ' ' + str(self.state.getDistRaced()) + '\n'
+        self.file.write(content)
 
 
 
