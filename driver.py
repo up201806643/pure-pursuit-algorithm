@@ -221,16 +221,15 @@ class Driver(object):
         gear = self.state.getGear()
         #self.targetSpeed()
         breakingZone = self.state.getMaxDistance() < self.state.getSpeedX() / 1.65
-        breakingZoneOpps = self.state.getOpponents()[9] < self.state.getSpeedX() / 1.65
-        print(self.state.getOpponents()[9])
+        breakingZoneOpps = self.state.getMinDistanceOpps() < self.state.getSpeedX() *0.6
         targetSpeed = 0
         hasWhellSpin = False
 
         if self.state.isOnTrack():
 
             if breakingZoneOpps:
-                targetSpeed = max(0, self.state.getOpponents()[9]) 
-                pass
+                targetSpeed = max(20, self.state.getMinDistanceOpps()) 
+                print('Entrou', self.state.minDistanceSensorIdxOpps + 16)
             elif breakingZone:
                 targetSpeed = max(self.DEFAULT_MIN_SPEED, self.state.getMaxDistance()) 
             else:

@@ -39,6 +39,7 @@ class CarState(object):
 
         #acrescentados
         self.maxDistanceSensorIdx = -1
+        self.minDistanceSensorIdxOpps = -1
     
     def setFromMsg(self, str_sensors):
         self.sensors = self.parser.parse(str_sensors)
@@ -309,9 +310,25 @@ class CarState(object):
         self.maxDistanceSensorIdx = max_sensor
 
         return max_sensor
+    
+    def getMinDistanceSensorOpps(self):
+        #Para encontrar o sensor com maior distancia
+        min_sensor = 0
+        track = self.getOpponents()[16:18]
+
+        for i in range(len(track)):
+            if track[i] < track[min_sensor]:
+                min_sensor = i
+        
+        self.minDistanceSensorIdxOpps = min_sensor
+
+        return min_sensor
 
     def getMaxDistance(self):
         return self.getTrack()[self.getMaxDistanceSensor()]
+
+    def getMinDistanceOpps(self):
+        return self.getOpponents()[self.getMinDistanceSensorOpps()]
 
     def getSpeed(self):
         return math.sqrt(math.pow(self.speedX,2) + math.pow(self.speedY,2))
