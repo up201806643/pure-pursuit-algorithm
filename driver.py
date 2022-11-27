@@ -82,8 +82,11 @@ class Driver(object):
         self.control = carControl.CarControl()
         self.past_accel = 0
 
+        #VAriaveis extra
         self.file = open("texto.txt", "a")
         self.file.truncate(0)
+
+
 
 
     def init(self):
@@ -110,42 +113,6 @@ class Driver(object):
         
         return self.control.toMsg()
     
-    def gear(self):
-        rpm = self.state.getRpm()
-        gear = self.state.getGear()
-        
-        gear = 1
-        if self.state.getSpeed() >40 :
-            gear=2
-        if self.state.getSpeed()>60 :
-            gear=3
-        if self.state.getSpeed()>80 :
-            gear=4
-        if self.state.getSpeed()>130 :
-            gear=5
-        if self.state.getSpeed()>300 :
-            gear=6
-        
-        self.control.setGear(gear)
-    
-    def speed(self):
-        speed = self.state.getSpeedX()
-        accel = self.control.getAccel()
-        
-        if speed < 150:
-            accel += 0.1
-            if accel > 1:
-                accel = 1.0
-        else:
-            accel -= 0.1
-            if accel < 0:
-                accel = 0.0
-        
-        self.control.setAccel(accel)
-            
-        
-
-
     #A partir daqui algoritmo e sua implementação
 
     #Steering and TargetAngle
@@ -252,13 +219,19 @@ class Driver(object):
     def computeSpeed(self):
         accel = 0
         gear = self.state.getGear()
+        #self.targetSpeed()
         breakingZone = self.state.getMaxDistance() < self.state.getSpeedX() / 1.65
+        breakingZoneOpps = self.state.getOpponents()[9] < self.state.getSpeedX() / 1.65
+        print(self.state.getOpponents()[9])
         targetSpeed = 0
         hasWhellSpin = False
 
         if self.state.isOnTrack():
 
-            if breakingZone:
+            if breakingZoneOpps:
+                targetSpeed = max(0, self.state.getOpponents()[9]) 
+                pass
+            elif breakingZone:
                 targetSpeed = max(self.DEFAULT_MIN_SPEED, self.state.getMaxDistance()) 
             else:
                 targetSpeed = self.DEFAULT_MAX_SPEED
@@ -283,7 +256,6 @@ class Driver(object):
             self.pid.setpoint = targetSpeed
             #accel = ao valor de la
             accel = self.pid(self.state.getSpeed())
-            print('accel1', accel)
         if accel > 0 :
             accel = self.state.clamp(accel, 0.0, self.ACCEL_MAX)
             if gear == 0 or self.state.getRpm() > self.RPM_MAX:
@@ -307,12 +279,24 @@ class Driver(object):
 
         self.control.setGear(gear)
 
-        print('TargerSpeed: ', targetSpeed, 'Acceleration: ', self.control.getAccel(), 'Breaking: ', self.control.getBrake())
+        #print('TargerSpeed: ', targetSpeed, 'Acceleration: ', self.control.getAccel(), 'Breaking: ', self.control.getBrake())
 
         content = str(targetSpeed) + ' ' + str(self.state.getSpeedX()) + ' ' + str(self.state.getDistRaced()) + '\n'
         self.file.write(content)
 
+    def computeSpeedOpps(self):
 
+        pass
+
+    def targetSpeed(self):
+        line = self.file_speed.readline().split()
+        distance = line[0]
+        target_speed = line[1]
+
+        
+
+
+        pass
 
 
 
