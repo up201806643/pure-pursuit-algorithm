@@ -229,7 +229,7 @@ class Driver(object):
 
             if breakingZoneOpps:
                 targetSpeed = max(20, self.state.getMinDistanceOpps()) 
-                print('Entrou', self.state.minDistanceSensorIdxOpps + 16)
+                print("Entrou")
             elif breakingZone:
                 targetSpeed = max(self.DEFAULT_MIN_SPEED, self.state.getMaxDistance()) 
             else:

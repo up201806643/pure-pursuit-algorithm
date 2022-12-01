@@ -314,15 +314,16 @@ class CarState(object):
     def getMinDistanceSensorOpps(self):
         #Para encontrar o sensor com maior distancia
         min_sensor = 0
-        track = self.getOpponents()[16:18]
-
+        track = self.getOpponents()[15:18]
+        print(track)
         for i in range(len(track)):
             if track[i] < track[min_sensor]:
                 min_sensor = i
-        
+
+        min_sensor = min_sensor + 15
         self.minDistanceSensorIdxOpps = min_sensor
 
-        return min_sensor
+        return min_sensor 
 
     def getMaxDistance(self):
         return self.getTrack()[self.getMaxDistanceSensor()]
